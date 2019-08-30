@@ -34,12 +34,12 @@
                     (map str)
                     (reverse))
 
-        value-string (pp/cprint-str form)
+        value-string (pp/pprint-str form)
 
-        ;Are there multiple trace lines?
+        ;;Are there multiple trace lines?
         multi-trace? (> n 1)
 
-        ;Indent if it's a multi-line structure
+        ;;Indent if it's a multi-line structure
         value-string (if (or (> (count value-string) 40)
                              (.contains value-string "\n"))
                        (str "\n" (indent 2 value-string))
@@ -47,26 +47,26 @@
 
         prefix (str/join "\n" frames)]
     {:message (str
-                (when multi-trace?
-                  (str (str/join (repeat 40 \-)) \newline))
-                prefix
-                (when-let [time? (:time meta)]
-                  (str " " (fmt/unparse (if (string? time?)
-                                          (fmt/formatter time?)
-                                          (fmt/formatters :date-hour-minute-second))
-                                        now)))
-                (when-let [marker (:marker meta)]
-                  (str " " marker))
-                (when (or (not (contains? meta :form))
-                          (:form meta))
-                  (str " " (pr-str (::form meta))))
-                " => " value-string)
+               (when multi-trace?
+                 (str (str/join (repeat 40 \-)) \newline))
+               prefix
+               (when-let [time? (:time meta)]
+                 (str " " (fmt/unparse (if (string? time?)
+                                         (fmt/formatter time?)
+                                         (fmt/formatters :date-hour-minute-second))
+                                       now)))
+               (when-let [marker (:marker meta)]
+                 (str " " marker))
+               (when (or (not (contains? meta :form))
+                         (:form meta))
+                 (str " " (pr-str (::form meta))))
+               " => " value-string)
      :frame1 (str (first frames-base))}))
 
 (defn print-log
   "Reader function to pprint a form's value."
   [form]
-  `(doto ~form pp/cprint))
+  `(doto ~form pp/pprint))
 
 (def ^{:internal true} trace-storage (agent {:trace [] :generation 0}))
 
